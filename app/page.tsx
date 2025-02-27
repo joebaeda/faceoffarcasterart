@@ -101,7 +101,7 @@ export default function Home() {
 
     const formData = new FormData()
     const blob = new Blob([fileHTML], { type: 'text/html' });
-    formData.append("file", blob, `${fid}.html`);
+    formData.append("file", blob);
     setIsUploading(true) // Set uploading state to true
 
     try {
@@ -119,8 +119,6 @@ export default function Home() {
       }
     } catch (err) {
       console.log({ message: 'Error uploading file', type: 'error', error: err });
-    } finally {
-      setIsUploading(false)
     }
   }
 
@@ -129,6 +127,7 @@ export default function Home() {
     try {
 
       const animationHash = await getHTMLHash();
+      setIsUploading(false)
 
       if (animationHash) {
 
