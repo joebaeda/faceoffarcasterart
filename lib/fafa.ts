@@ -1,4 +1,4 @@
-export const fafaAddress = "0xDe75DeD5e50CB57e8Ce4c2534B6E3bA7eF2B28bd";
+export const fafaAddress = "0xaB8590bEf84381cA0E14e61a399759B017E04191";
 export const fafaAbi = [
 	{
 		"inputs": [
@@ -440,19 +440,6 @@ export const fafaAbi = [
 				"internalType": "uint256",
 				"name": "",
 				"type": "uint256"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [],
-		"name": "faceOfFarcaster",
-		"outputs": [
-			{
-				"internalType": "contract IFaceOfFarcaster",
-				"name": "",
-				"type": "address"
 			}
 		],
 		"stateMutability": "view",

@@ -8,7 +8,7 @@ import { fafaAbi, fafaAddress } from "@/lib/fafa";
 import { base } from "viem/chains";
 import sdk from "@farcaster/frame-sdk";
 import useAnimationFrames from "@/hooks/useAnimationFrames";
-import { Leaf, LockKeyhole, Rocket } from "lucide-react";
+import { ExternalLink, Leaf, LockKeyhole, Rocket } from "lucide-react";
 import { fafaHTMLFile } from "./components/fafaFile";
 import { config } from "@/lib/config";
 import Loading from "./components/svg/Loading";
@@ -19,6 +19,7 @@ export default function Home() {
   const [isUploading, setIsUploading] = useState(false);
   const [animationURIs, setAnimationURIs] = useState<string>("");
   const [showTermOfMint, setShowTermOfMint] = useState(false);
+  const [showTermOfMintTwo, setShowTermOfMintTwo] = useState(false);
   const [showLoadingAnimation, setShowLoadingAnimation] = useState(false);
 
   const { pfpUrl, username, fid, added } = useViewer();
@@ -46,6 +47,14 @@ export default function Home() {
     args: [address as `0x${string}`],
   });
 
+  const { data: fafaBalance } = useReadContract({
+    address: fafaAddress as `0x${string}`,
+    abi: fafaAbi,
+    chainId: base.id,
+    functionName: "balanceOf",
+    args: [address as `0x${string}`],
+  });
+
   const { isLoading: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({
     hash: fafaHash,
   });
@@ -57,10 +66,17 @@ export default function Home() {
     }
   }, []);
 
-  // Basescan
+  // Opensea
   const linkToOpensea = useCallback((tokenId?: number) => {
     if (tokenId) {
       sdk.actions.openUrl(`https://opensea.io/item/base/${fafaAddress}/${tokenId + 1}}`);
+    }
+  }, []);
+
+  // Animation Page
+  const linkToAnimationPage = useCallback((animationURIs?: string) => {
+    if (animationURIs) {
+      sdk.actions.openUrl(animationURIs);
     }
   }, []);
 
@@ -74,6 +90,7 @@ export default function Home() {
   useEffect(() => {
     if (isConfirmed) {
       setShowMintSuccess(true);
+      setShowLoadingAnimation(false);
     }
   }, [isConfirmed]);
 
@@ -90,6 +107,12 @@ export default function Home() {
   }, [faceBalance]);
 
   useEffect(() => {
+    if (fafaBalance as bigint > BigInt(0)) {
+      setShowTermOfMintTwo(true);
+    }
+  }, [fafaBalance]);
+
+  useEffect(() => {
     if (isUploading || isFafaPending || isConfirming) {
       setShowLoadingAnimation(true);
     }
@@ -101,7 +124,7 @@ export default function Home() {
 
     const formData = new FormData()
     const blob = new Blob([fileHTML], { type: 'text/html' });
-    formData.append("file", blob);
+    formData.append("file", blob, `${fid}.html` );
     setIsUploading(true) // Set uploading state to true
 
     try {
@@ -141,6 +164,7 @@ export default function Home() {
 
         const animationUrl = `https://ipfs.io/ipfs/${animationHash}`
         setAnimationURIs(animationUrl)
+
       }
 
     } catch (error) {
@@ -184,6 +208,12 @@ export default function Home() {
               >
                 Opensea
               </button>
+              <button
+                className="w-16 p-3 rounded-xl bg-gradient-to-r from-[#290f37] to-[#201029] shadow-lg disabled:cursor-not-allowed"
+                onClick={() => linkToAnimationPage(animationURIs)}
+              >
+                <ExternalLink className="w-6 h-6" />
+              </button>
             </div>
           </div>
         </div>
@@ -203,7 +233,7 @@ export default function Home() {
         </div>
       )}
 
-      {/* Term of Mint */}
+      {/* Term of Mint One */}
       {showTermOfMint && (
         <div
           onClick={() => setShowTermOfMint(false)}
@@ -212,6 +242,20 @@ export default function Home() {
           <div className="relative bg-[#230b36cc] bg-opacity-25 backdrop-blur-[10px] text-slate-300 p-6 rounded-2xl shadow-lg text-center">
             <p className="text-center p-4">
               Must have Face Of Farcaster NFT by @sayangel to be able to Mint.
+            </p>
+          </div>
+        </div>
+      )}
+
+      {/* Term of Mint Two */}
+      {showTermOfMintTwo && (
+        <div
+          onClick={() => setShowTermOfMintTwo(false)}
+          className="absolute top-1/4 mx-auto flex items-center justify-center p-4 z-10 w-full max-w-[90%] md:max-w-[384px] max-h-[384px] rounded-xl"
+        >
+          <div className="relative bg-[#230b36cc] bg-opacity-25 backdrop-blur-[10px] text-slate-300 p-6 rounded-2xl shadow-lg text-center">
+            <p className="text-center p-4">
+              One FID or one Address only one FAFA can be Minted.
             </p>
           </div>
         </div>
@@ -246,8 +290,10 @@ export default function Home() {
                 isFafaPending ||
                 isConfirming ||
                 showTermOfMint ||
+                showTermOfMintTwo ||
                 chainId !== base.id ||
-                faceBalance as bigint <= BigInt(0)
+                faceBalance as bigint <= BigInt(0) ||
+                fafaBalance as bigint > BigInt(0)
               }
               className="w-full p-4"
             >
