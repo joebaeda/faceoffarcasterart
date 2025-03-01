@@ -85,7 +85,7 @@ export default function FaceOfFarcasterArt() {
       ? query.toLowerCase()
       : `@${query.toLowerCase()}`;
 
-      router.push(`/creator?q=${normalizedQuery.replace("@", "")}`);
+      router.push(`/?q=${normalizedQuery.replace("@", "")}`);
 
     for (let id = 1; id <= maxTokenId; id++) {
       try {
