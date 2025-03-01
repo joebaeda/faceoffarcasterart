@@ -1,7 +1,6 @@
 "use client";
 
-import { Suspense, useEffect, useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useEffect, useState } from "react";
 import { ArrowLeft, ArrowRight, ExternalLink, Search } from "lucide-react";
 import { createPublicClient, http } from "viem";
 import { base } from "viem/chains";
@@ -31,9 +30,6 @@ export default function FaceOfFarcasterArt() {
   const [maxTokenId, setMaxTokenId] = useState<number>(0);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [searchQuery, setSearchQuery] = useState<string>("");
-
-  const searchParams = useSearchParams();
-  const router = useRouter();
 
   const publicClient = createPublicClient({
     chain: base,
@@ -77,15 +73,14 @@ export default function FaceOfFarcasterArt() {
   };
 
   // Search for an NFT by creator username
-  const handleSearch = async (query: string) => {
-    if (!query || maxTokenId === 0) return;
+  const handleSearch = async () => {
+    if (!searchQuery) return;
 
     setIsLoading(true);
-    const normalizedQuery = query.startsWith("@")
-      ? query.toLowerCase()
-      : `@${query.toLowerCase()}`;
-
-    router.push(`/?q=${normalizedQuery.replace("@", "")}`);
+    
+    const normalizedQuery = searchQuery.startsWith("@")
+      ? searchQuery.toLowerCase()
+      : `@${searchQuery.toLowerCase()}`;
 
     for (let id = 1; id <= maxTokenId; id++) {
       try {
@@ -120,16 +115,6 @@ export default function FaceOfFarcasterArt() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Handle query parameter and trigger search when maxTokenId is ready
-  useEffect(() => {
-    const query = searchParams.get("q");
-    if (query && maxTokenId > 0) {
-      setSearchQuery(query); // Update input field
-      handleSearch(query); // Trigger search with query param
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [searchParams, maxTokenId]);
-
   // Fetch animation URL when tokenId or maxTokenId changes
   useEffect(() => {
     if (maxTokenId > 0) {
@@ -159,23 +144,21 @@ export default function FaceOfFarcasterArt() {
           <ArrowLeft className="w-6 h-6" />
         </button>
 
-        <Suspense>
-          <div className="w-full relative flex justify-center items-center">
-            <input
-              type="text"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="by username"
-              className="relative placeholder:text-sm w-full backdrop-blur-md bg-slate-800 bg-opacity-50 p-4 focus:outline-none text-white"
-            />
-            <button
-              onClick={() => handleSearch(searchQuery)}
-              className="absolute text-white right-4 flex items-center z-20"
-            >
-              <Search className="w-5 h-5" />
-            </button>
-          </div>
-        </Suspense>
+        <div className="w-full relative flex justify-center items-center">
+          <input
+            type="text"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder="by username"
+            className="relative placeholder:text-sm w-full backdrop-blur-md bg-slate-800 bg-opacity-50 p-4 focus:outline-none text-white"
+          />
+          <button
+            onClick={handleSearch}
+            className="absolute text-white right-4 flex items-center z-20"
+          >
+            <Search className="w-5 h-5" />
+          </button>
+        </div>
 
         <button
           onClick={handleNext}
