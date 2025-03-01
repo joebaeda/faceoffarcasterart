@@ -19,7 +19,6 @@ export default function Home() {
   const [isUploading, setIsUploading] = useState(false);
   const [animationURIs, setAnimationURIs] = useState<string>("");
   const [showTermOfMint, setShowTermOfMint] = useState(false);
-  const [showTermOfMintTwo, setShowTermOfMintTwo] = useState(false);
   const [showLoadingAnimation, setShowLoadingAnimation] = useState(false);
 
   const { pfpUrl, username, fid, added } = useViewer();
@@ -37,14 +36,6 @@ export default function Home() {
     abi: fafaAbi,
     chainId: base.id,
     functionName: "totalSupply",
-  });
-
-  const { data: faceBalance } = useReadContract({
-    address: "0xad74B4A2C425EbB8F8d8Ee191058089Db5461264", // Face of Farcaster NFT Contract
-    abi: fafaAbi,
-    chainId: base.id,
-    functionName: "balanceOf",
-    args: [address as `0x${string}`],
   });
 
   const { data: fafaBalance } = useReadContract({
@@ -101,14 +92,8 @@ export default function Home() {
   }, [fafaError]);
 
   useEffect(() => {
-    if (faceBalance as bigint <= BigInt(0)) {
-      setShowTermOfMint(true);
-    }
-  }, [faceBalance]);
-
-  useEffect(() => {
     if (fafaBalance as bigint > BigInt(0)) {
-      setShowTermOfMintTwo(true);
+      setShowTermOfMint(true);
     }
   }, [fafaBalance]);
 
@@ -233,24 +218,10 @@ export default function Home() {
         </div>
       )}
 
-      {/* Term of Mint One */}
+      {/* Term of Mint */}
       {showTermOfMint && (
         <div
           onClick={() => setShowTermOfMint(false)}
-          className="absolute top-1/4 mx-auto flex items-center justify-center p-4 z-10 w-full max-w-[90%] md:max-w-[384px] max-h-[384px] rounded-xl"
-        >
-          <div className="relative bg-[#230b36cc] bg-opacity-25 backdrop-blur-[10px] text-slate-300 p-6 rounded-2xl shadow-lg text-center">
-            <p className="text-center p-4">
-              Must have Face Of Farcaster NFT by @sayangel to be able to Mint.
-            </p>
-          </div>
-        </div>
-      )}
-
-      {/* Term of Mint Two */}
-      {showTermOfMintTwo && (
-        <div
-          onClick={() => setShowTermOfMintTwo(false)}
           className="absolute top-1/4 mx-auto flex items-center justify-center p-4 z-10 w-full max-w-[90%] md:max-w-[384px] max-h-[384px] rounded-xl"
         >
           <div className="relative bg-[#230b36cc] bg-opacity-25 backdrop-blur-[10px] text-slate-300 p-6 rounded-2xl shadow-lg text-center">
@@ -290,9 +261,7 @@ export default function Home() {
                 isFafaPending ||
                 isConfirming ||
                 showTermOfMint ||
-                showTermOfMintTwo ||
                 chainId !== base.id ||
-                faceBalance as bigint <= BigInt(0) ||
                 fafaBalance as bigint > BigInt(0)
               }
               className="w-full p-4"

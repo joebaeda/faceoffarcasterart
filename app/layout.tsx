@@ -10,24 +10,11 @@ const geistMono = Geist_Mono({
 
 const appUrl = "https://faceoffarcasterart.vercel.app";
 
-const frame = {
-  version: "next",
-  imageUrl: `${appUrl}/og-image.jpg`,
-  button: {
-    title: "Mint your FAFA",
-    action: {
-      type: "launch_frame",
-      name: "FAFA",
-      url: appUrl,
-      splashImageUrl: `${appUrl}/splash.png`,
-      splashBackgroundColor: "#1b1423",
-    },
-  },
-};
-
 export const revalidate = 300;
 
 export async function generateMetadata(): Promise<Metadata> {
+  const ogImageUrl = `${appUrl}/og-image.jpg`;
+
   return {
     title: "FAFA | Face of Farcaster Art",
     description: "A platform exclusively for Farcaster users to mint their PFP into Digital Art!",
@@ -38,7 +25,7 @@ export async function generateMetadata(): Promise<Metadata> {
       type: 'website',
       images: [
         {
-          url: `${appUrl}/og-image.jpg`,
+          url: ogImageUrl,
           width: 1200,
           height: 600,
           alt: 'Mint your Face of Farcaster Art!',
@@ -49,13 +36,26 @@ export async function generateMetadata(): Promise<Metadata> {
       card: 'summary_large_image',
       title: "FAFA | Face of Farcaster Art",
       description: "A platform exclusively for Farcaster users to mint their PFP into Digital Art!",
-      images: [`${appUrl}/og-image.jpg`],
+      images: [ogImageUrl],
     },
     icons: {
       icon: '/favicon.ico',
     },
     other: {
-      "fc:frame": JSON.stringify(frame),
+      "fc:frame": JSON.stringify({
+        version: "next",
+        imageUrl: ogImageUrl,
+        button: {
+          title: "Mint your FAFA",
+          action: {
+            type: "launch_frame",
+            name: "FAFA",
+            url: appUrl,
+            splashImageUrl: `${appUrl}/splash.png`,
+            splashBackgroundColor: "#1b1423",
+          },
+        },
+      }),
     },
   }
 };
