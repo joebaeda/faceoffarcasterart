@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { ArrowLeft, ArrowRight, ExternalLink, Search } from "lucide-react";
 import { createPublicClient, http } from "viem";
@@ -85,7 +85,7 @@ export default function FaceOfFarcasterArt() {
       ? query.toLowerCase()
       : `@${query.toLowerCase()}`;
 
-      router.push(`/?q=${normalizedQuery.replace("@", "")}`);
+    router.push(`/?q=${normalizedQuery.replace("@", "")}`);
 
     for (let id = 1; id <= maxTokenId; id++) {
       try {
@@ -159,21 +159,23 @@ export default function FaceOfFarcasterArt() {
           <ArrowLeft className="w-6 h-6" />
         </button>
 
-        <div className="w-full relative flex justify-center items-center">
-          <input
-            type="text"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="by username"
-            className="relative placeholder:text-sm w-full backdrop-blur-md bg-slate-800 bg-opacity-50 p-4 focus:outline-none text-white"
-          />
-          <button
-            onClick={() => handleSearch(searchQuery)}
-            className="absolute text-white right-4 flex items-center z-20"
-          >
-            <Search className="w-5 h-5" />
-          </button>
-        </div>
+        <Suspense>
+          <div className="w-full relative flex justify-center items-center">
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="by username"
+              className="relative placeholder:text-sm w-full backdrop-blur-md bg-slate-800 bg-opacity-50 p-4 focus:outline-none text-white"
+            />
+            <button
+              onClick={() => handleSearch(searchQuery)}
+              className="absolute text-white right-4 flex items-center z-20"
+            >
+              <Search className="w-5 h-5" />
+            </button>
+          </div>
+        </Suspense>
 
         <button
           onClick={handleNext}

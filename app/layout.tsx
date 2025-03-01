@@ -2,8 +2,6 @@ import type { Metadata } from "next";
 import { Geist_Mono } from "next/font/google";
 import "./globals.css";
 import Provider from "./providers/Provider";
-import { Suspense } from "react";
-import FaceOfFarcasterArt from "./components/FaceOfFarcasterArt";
 
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
@@ -72,11 +70,9 @@ export default function RootLayout({
       <body
         className={`${geistMono.variable} antialiased bg-[#1b1423]`}
       >
-        <Suspense fallback={<FaceOfFarcasterArt />}>
-          <Provider>
-            {children}
-          </Provider>
-        </Suspense>
+        <Provider>
+          {children}
+        </Provider>
       </body>
     </html>
   );
