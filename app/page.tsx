@@ -8,7 +8,7 @@ import { fafaAbi, fafaAddress } from "@/lib/fafa";
 import { base } from "viem/chains";
 import sdk from "@farcaster/frame-sdk";
 import useAnimationFrames from "@/hooks/useAnimationFrames";
-import { ExternalLink, Leaf, LockKeyhole, Rocket } from "lucide-react";
+import { Leaf, LockKeyhole, Rocket } from "lucide-react";
 import { fafaHTMLFile } from "./components/fafaFile";
 import { config } from "@/lib/config";
 import Loading from "./components/svg/Loading";
@@ -65,9 +65,11 @@ export default function Home() {
   }, []);
 
   // Animation Page
-  const linkToAnimationPage = useCallback((animationURIs?: string) => {
+  const linkToShare = useCallback((animationURIs?: string) => {
     if (animationURIs) {
-      sdk.actions.openUrl(animationURIs);
+      sdk.actions.openUrl(
+        `https://warpcast.com/~/compose?text=Just%20Minted%20my%20Face%20of%20Farcaster%20Art%20via%20this%20Frame!%20%20${animationURIs}&embeds[]=https://faceoffarcasterart.vercel.app`
+      );
     }
   }, []);
 
@@ -109,7 +111,7 @@ export default function Home() {
 
     const formData = new FormData()
     const blob = new Blob([fileHTML], { type: 'text/html' });
-    formData.append("file", blob, `${fid}.html` );
+    formData.append("file", blob, `${fid}.html`);
     setIsUploading(true) // Set uploading state to true
 
     try {
@@ -194,10 +196,10 @@ export default function Home() {
                 Opensea
               </button>
               <button
-                className="w-16 p-3 rounded-xl bg-gradient-to-r from-[#290f37] to-[#201029] shadow-lg disabled:cursor-not-allowed"
-                onClick={() => linkToAnimationPage(animationURIs)}
+                className="w-full p-3 rounded-xl bg-gradient-to-r from-[#290f37] to-[#201029] shadow-lg disabled:cursor-not-allowed"
+                onClick={() => linkToShare(animationURIs)}
               >
-                <ExternalLink className="w-6 h-6" />
+                Share
               </button>
             </div>
           </div>
